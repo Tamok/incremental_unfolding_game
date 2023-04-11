@@ -108,14 +108,6 @@ fn initialize_game_state(character: Character) -> GameState {
     },
 }
 
-fn gather_resource(character: &mut Character, resource_name: &str, amount: f64) {
-    if let Some(resource) = character.resources.get_mut(resource_name) {
-        resource.amount += amount;
-    } else {
-        println!("Resource not found: {}", resource_name);
-    }
-}
-
 fn gather_resources(resources: &mut HashMap<String, Resource>, abilities: &[Ability]) {
     // Apply the Gather ability bonus
     let gather_bonus = abilities
