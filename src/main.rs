@@ -66,12 +66,20 @@ fn game_loop(game_state: &mut GameState) {
         let start_time = Instant::now();
 
         // Gather resources
-        gather_resources(&mut game_state.character.resources, &game_state.character.abilities);
+        for ability in &game_state.character.abilities {
+            let AbilityType::Gather = ability.ability_type {
+            let elapsed_time = start_time.elapsed();
+            gather_resources(&mut game_state.character.resources, std::slice::from_ref(ability), elapsed_time);
+        }
+    }      
 
         // Gain experience and level up
         gain_experience(&mut game_state.character, 10.0);
 
-        println!("{:?}", game_state.character.resources);
+        for resource in game_state.character.resources.values() {
+            println!("{}: {}", resource.name, resource.amount);
+        } 
+        println!(); // Add an empty line for better readability
 
         let elapsed_time = start_time.elapsed();
         let sleep_duration = Duration::from_secs(1).checked_sub(elapsed_time).unwrap_or_default();
@@ -106,10 +114,10 @@ fn initialize_game_state(character: Character) -> GameState {
 
     GameState {
         character: character,
-    };
+    }
 }
 
-fn gather_resources(resources: &mut HashMap<String, Resource>, abilities: &[Ability]) {
+fn gather_resources(resources: &mut HashMap<String, Resource>, abilities: &[Ability], elapsed_time: Duration) {
     // Apply the Gather ability bonus
     let gather_bonus = abilities
         .iter()
@@ -117,12 +125,9 @@ fn gather_resources(resources: &mut HashMap<String, Resource>, abilities: &[Abil
         .map(|ability| ability.level as f64)
         .sum::<f64>();
 
-     for ability in gather_ability {
-        if let Some(resource) = resources.get_mut(&ability.target_resource) {        
-            let amount = 1.0 + gather_bonus;
-            resource.amount += amount;
-            println!("Gathered {:.1} {}.", amount, resource.name);
-        }
+    // Update the resources
+    for resource in resources.values_mut() {
+        resource.amount += gather_bonus * elapsed_time.as_secs_f64();
     }
 }
 
@@ -134,5 +139,9 @@ fn gain_experience(character: &mut Character, experience: f64) {
         character.level += 1;
         character.experience -= required_experience;
         println!("Level up! {} is now level {}", character.name, character.level);
+        for ability in &character.abilities {
+            println!("{}: Level {}", ability.name, ability.level);
+        }
+        println!(); // Add an empty line for better readability
     }
 }
