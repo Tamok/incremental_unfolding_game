@@ -1,4 +1,4 @@
-use std::time::Duration;
+use std::time::{Duration, Instant};
 use std::thread::sleep;
 use std::collections::HashMap;
 
@@ -48,21 +48,24 @@ impl Ability {
 fn main() {
     let mut game_state = initialize_game_state();
 
+    game_loop(&mut game_state);
+}
+
+fn game_loop(game_state: &mut GameState) {
     loop {
-        // Game logic goes here
-        // Gather wood
+        let start_time = Instant::now();
+
+        // Gather resources
         gather_resources(&mut game_state.character.resources, &game_state.character.abilities);
 
         // Gain experience and level up
         gain_experience(&mut game_state.character, 10.0);
 
-        // Print the current wood amount
-        println!(
-            "Wood: {}",
-            game_state.character.resources.get("wood").unwrap().amount
-        );
+        println!("{:?}", game_state.character.resources);
 
-        sleep(Duration::from_millis(1000)); // Adjust the duration to control the game loop's speed
+        let elapsed_time = start_time.elapsed();
+        let sleep_duration = Duration::from_secs(1).checked_sub(elapsed_time).unwrap_or_default();
+        sleep(sleep_duration);
     }
 }
 
