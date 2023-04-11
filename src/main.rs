@@ -46,6 +46,16 @@ impl Ability {
 }
 
 fn main() {
+    let character = Character {
+        name: "Thomoze Thounis".to_string(),
+        level: 1,
+        experience: 0.0,
+        abilities: vec![
+            Ability::new("Gather", AbilityType::Gather),
+        ],
+        resources: HashMap::new(),
+    };
+    
     let mut game_state = initialize_game_state(character);
 
     game_loop(&mut game_state);
@@ -94,18 +104,9 @@ fn initialize_game_state(character: Character) -> GameState {
         },
     );
 
-    let character = Character {
-        name: "Thomoze Thounis".to_string(),
-        level: 1,
-        experience: 0.0,
-        abilities: vec![
-            Ability::new("Gather", AbilityType::Gather),
-        ],
-    };
-
     GameState {
         character: character,
-    },
+    };
 }
 
 fn gather_resources(resources: &mut HashMap<String, Resource>, abilities: &[Ability]) {
@@ -116,7 +117,7 @@ fn gather_resources(resources: &mut HashMap<String, Resource>, abilities: &[Abil
         .map(|ability| ability.level as f64)
         .sum::<f64>();
 
-     for ability in gather_abilities {
+     for ability in gather_ability {
         if let Some(resource) = resources.get_mut(&ability.target_resource) {        
             let amount = 1.0 + gather_bonus;
             resource.amount += amount;
