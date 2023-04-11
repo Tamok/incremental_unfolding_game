@@ -10,8 +10,10 @@ struct Resource {
 
 #[derive(Debug)]
 struct Character {
-    level: u32,
+    name: String,
     resources: HashMap<String, Resource>,
+    level: u32,
+    experience: f64,
 }
 
 #[derive(Debug)]
@@ -27,21 +29,16 @@ fn main() {
         // Gather wood
         gather_resource(&mut game_state.character, "wood", 1.0);
 
+        // Gain experience and level up
+        gain_experience(&mut game_state.character, 10.0);
+
         // Print the current wood amount
         println!(
             "Wood: {}",
             game_state.character.resources.get("wood").unwrap().amount
         );
 
-        sleep(Duration::from_millis(100)); // Adjust the duration to control the game loop's speed
-    }
-}
-
-fn gather_resource(character: &mut Character, resource_name: &str, amount: f64) {
-    if let Some(resource) = character.resources.get_mut(resource_name) {
-        resource.amount += amount;
-    } else {
-        println!("Resource not found: {}", resource_name);
+        sleep(Duration::from_millis(1000)); // Adjust the duration to control the game loop's speed
     }
 }
 
@@ -70,10 +67,36 @@ fn initialize_game_state() -> GameState {
         },
     );
 
+    let character = Character {
+        name: "Thomoze Thounis".to_string(),
+        resources: resources,
+        level: 1,
+        experience: 0.0,
+    };
+
     GameState {
         character: Character {
             level: 1,
             resources: initial_resources,
         },
+    }
+}
+
+fn gather_resource(character: &mut Character, resource_name: &str, amount: f64) {
+    if let Some(resource) = character.resources.get_mut(resource_name) {
+        resource.amount += amount;
+    } else {
+        println!("Resource not found: {}", resource_name);
+    }
+}
+
+fn gain_experience(character: &mut Character, experience: f64) {
+    character.experience += experience;
+    let required_experience = (character.level as f64) * 100.0; // Simple leveling formula
+
+    if character.experience >= required_experience {
+        character.level += 1;
+        character.experience -= required_experience;
+        println!("Level up! {} is now level {}", character.name, character.level);
     }
 }
