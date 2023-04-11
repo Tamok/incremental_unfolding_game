@@ -2,16 +2,6 @@ use std::time::Duration;
 use std::thread::sleep;
 use std::collections::HashMap;
 
-fn main() {
-    let mut game_state = initialize_game_state();
-
-    loop {
-        // Game logic goes here
-
-        sleep(Duration::from_millis(100)); // Adjust the duration to control the game loop's speed
-    }
-}
-
 #[derive(Debug)]
 struct Resource {
     name: String,
@@ -27,6 +17,32 @@ struct Character {
 #[derive(Debug)]
 struct GameState {
     character: Character,
+}
+
+fn main() {
+    let mut game_state = initialize_game_state();
+
+    loop {
+        // Game logic goes here
+        // Gather wood
+        gather_resource(&mut game_state.character, "wood", 1.0);
+
+        // Print the current wood amount
+        println!(
+            "Wood: {}",
+            game_state.character.resources.get("wood").unwrap().amount
+        );
+
+        sleep(Duration::from_millis(100)); // Adjust the duration to control the game loop's speed
+    }
+}
+
+fn gather_resource(character: &mut Character, resource_name: &str, amount: f64) {
+    if let Some(resource) = character.resources.get_mut(resource_name) {
+        resource.amount += amount;
+    } else {
+        println!("Resource not found: {}", resource_name);
+    }
 }
 
 fn initialize_game_state() -> GameState {
