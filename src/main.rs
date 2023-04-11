@@ -14,11 +14,35 @@ struct Character {
     resources: HashMap<String, Resource>,
     level: u32,
     experience: f64,
+    abilities: Vec<Ability>,
 }
 
 #[derive(Debug)]
 struct GameState {
     character: Character,
+}
+
+#[derive(Debug, Clone)]
+enum AbilityType {
+    Gather,
+    // Add more ability types here as needed
+}
+
+#[derive(Debug, Clone)]
+struct Ability {
+    name: String,
+    ability_type: AbilityType,
+    level: u32,
+}
+
+impl Ability {
+    fn new(name: &str, ability_type: AbilityType) -> Self {
+        Ability {
+            name: name.to_string(),
+            ability_type,
+            level: 1,
+        }
+    }
 }
 
 fn main() {
@@ -27,7 +51,7 @@ fn main() {
     loop {
         // Game logic goes here
         // Gather wood
-        gather_resource(&mut game_state.character, "wood", 1.0);
+        gather_resources(&mut game_state.character.resources, &game_state.character.abilities);
 
         // Gain experience and level up
         gain_experience(&mut game_state.character, 10.0);
@@ -72,6 +96,9 @@ fn initialize_game_state() -> GameState {
         resources: resources,
         level: 1,
         experience: 0.0,
+        abilities: vec![
+            Ability::new("Gather", AbilityType::Gather),
+        ],
     };
 
     GameState {
@@ -87,6 +114,23 @@ fn gather_resource(character: &mut Character, resource_name: &str, amount: f64) 
         resource.amount += amount;
     } else {
         println!("Resource not found: {}", resource_name);
+    }
+}
+
+fn gather_resources(resources: &mut HashMap<String, Resource>, abilities: &[Ability]) {
+    // Apply the Gather ability bonus
+    let gather_bonus = abilities
+        .iter()
+        .filter(|ability| matches!(ability.ability_type, AbilityType::Gather))
+        .map(|ability| ability.level as f64)
+        .sum::<f64>();
+
+    for (_, resource) in resources.iter_mut() {
+        if resource.can_gather {
+            let amount = 1.0 + gather_bonus;
+            resource.amount += amount;
+            println!("Gathered {:.1} {}.", amount, resource.name);
+        }
     }
 }
 
