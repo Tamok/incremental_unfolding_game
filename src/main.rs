@@ -2,7 +2,7 @@ use std::time::{Duration, Instant};
 use std::thread::sleep;
 use std::collections::HashMap;
 
-mod ui
+mod ui;
 
 #[derive(Debug)]
 struct Resource {
@@ -89,7 +89,7 @@ fn main() -> iced::Result {
     add_quest(&mut game_state.character, Quest::new("Gather Wood", "Gather 100 units of wood", 100.0, 50.0));
 
     // Start the Iced UI
-    ui::run()
+    ui::run(&game_state.character)
 }
 
 fn game_loop(game_state: &mut GameState) {
