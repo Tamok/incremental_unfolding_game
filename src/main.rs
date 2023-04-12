@@ -198,9 +198,9 @@ fn add_quest(character: &mut Character, quest: Quest) {
 
 fn check_quests(character: &mut Character) {
     for quest in &mut character.quests {
-        if !quest.is_complete {
+        if !quest.completed {
             let mut all_requirements_met = true;
-            for requirement in &quest.requirements {
+            for requirement in &quest.goal {
                 if let Some(resource) = character.resources.get(&requirement.resource_name) {
                     if resource.amount < requirement.amount {
                         all_requirements_met = false;
@@ -212,7 +212,7 @@ fn check_quests(character: &mut Character) {
                 }
             }
             if all_requirements_met {
-                quest.is_complete = true;
+                quest.completed = true;
                 println!("Quest completed: {}", quest.name);
             }
         }

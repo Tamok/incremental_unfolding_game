@@ -2,14 +2,27 @@ use iced::{Column, Element, Sandbox, Settings, Text};
 use crate::Character;
 
 pub fn run(character: &Character) -> iced::Result {
-    Ui::run(Settings::default(), character)
+    Ui::new().with_character(character).run(Settings::default())
+}
+
+impl<'a> Ui<'a> {
+    fn new() -> Self {
+        Self {
+            character: None,
+        }
+    }
+
+    fn with_character(mut self, character: &'a Character) -> Self {
+        self.character = Some(character);
+        self
+    }
 }
 
 pub struct Ui<'a> {
     character: &'a Character,
 }
 
-impl Sandbox for Ui {
+impl<'a> Sandbox for Ui<'a> {
     type Message = ();
 
     fn new(character: &'a Character) -> Self {
