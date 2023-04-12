@@ -2,6 +2,8 @@ use std::time::{Duration, Instant};
 use std::thread::sleep;
 use std::collections::HashMap;
 
+mod ui
+
 #[derive(Debug)]
 struct Resource {
     name: String,
@@ -15,11 +17,25 @@ struct Character {
     level: u32,
     experience: f64,
     abilities: Vec<Ability>,
+    quests: Vec<Quest>,
 }
 
 #[derive(Debug)]
 struct GameState {
     character: Character,
+}
+
+impl Character {
+    fn new(name: &str) -> Self {
+        Character {
+            name: name.to_string(),
+            level: 1,
+            experience: 0.0,
+            abilities: vec![Ability::new("Gather", AbilityType::Gather)],
+            resources: HashMap::new(),
+            quests: Vec::new(),
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -45,20 +61,35 @@ impl Ability {
     }
 }
 
-fn main() {
-    let character = Character {
-        name: "Thomoze Thounis".to_string(),
-        level: 1,
-        experience: 0.0,
-        abilities: vec![
-            Ability::new("Gather", AbilityType::Gather),
-        ],
-        resources: HashMap::new(),
-    };
-    
-    let mut game_state = initialize_game_state(character);
+#[derive(Debug, Clone)]
+struct Quest {
+    name: String,
+    description: String,
+    goal: f64,
+    completed: bool,
+    reward: f64,
+}
 
-    game_loop(&mut game_state);
+impl Quest {
+    fn new(name: &str, description: &str, goal: f64, reward: f64) -> Self {
+        Quest {
+            name: name.to_string(),
+            description: description.to_string(),
+            goal,
+            completed: false,
+            reward,
+        }
+    }
+}
+
+fn main() -> iced::Result {
+    let character = create_character();
+    let mut game_state = initialize_game_state(character);
+    // Sample quest
+    add_quest(&mut game_state.character, Quest::new("Gather Wood", "Gather 100 units of wood", 100.0, 50.0));
+
+    // Start the Iced UI
+    ui::run()
 }
 
 fn game_loop(game_state: &mut GameState) {
@@ -67,7 +98,7 @@ fn game_loop(game_state: &mut GameState) {
 
         // Gather resources
         for ability in &game_state.character.abilities {
-            let AbilityType::Gather = ability.ability_type {
+            if let AbilityType::Gather = ability.ability_type {
             let elapsed_time = start_time.elapsed();
             gather_resources(&mut game_state.character.resources, std::slice::from_ref(ability), elapsed_time);
         }
@@ -76,6 +107,10 @@ fn game_loop(game_state: &mut GameState) {
         // Gain experience and level up
         gain_experience(&mut game_state.character, 10.0);
 
+        // Check for quest completion
+        check_quests(&mut game_state.character);
+
+        // Print everything
         for resource in game_state.character.resources.values() {
             println!("{}: {}", resource.name, resource.amount);
         } 
@@ -117,6 +152,17 @@ fn initialize_game_state(character: Character) -> GameState {
     }
 }
 
+fn create_character() -> Character {
+    println!("Enter your character's name:");
+    let mut name = String::new();
+    std::io::stdin()
+        .read_line(&mut name)
+        .expect("Failed to read the character's name");
+    name = name.trim().to_string();
+
+    Character::new(&name)
+}
+
 fn gather_resources(resources: &mut HashMap<String, Resource>, abilities: &[Ability], elapsed_time: Duration) {
     // Apply the Gather ability bonus
     let gather_bonus = abilities
@@ -143,5 +189,32 @@ fn gain_experience(character: &mut Character, experience: f64) {
             println!("{}: Level {}", ability.name, ability.level);
         }
         println!(); // Add an empty line for better readability
+    }
+}
+
+fn add_quest(character: &mut Character, quest: Quest) {
+    character.quests.push(quest);
+}
+
+fn check_quests(character: &mut Character) {
+    for quest in &mut character.quests {
+        if !quest.is_complete {
+            let mut all_requirements_met = true;
+            for requirement in &quest.requirements {
+                if let Some(resource) = character.resources.get(&requirement.resource_name) {
+                    if resource.amount < requirement.amount {
+                        all_requirements_met = false;
+                        break;
+                    }
+                } else {
+                    all_requirements_met = false;
+                    break;
+                }
+            }
+            if all_requirements_met {
+                quest.is_complete = true;
+                println!("Quest completed: {}", quest.name);
+            }
+        }
     }
 }
