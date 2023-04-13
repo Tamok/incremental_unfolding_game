@@ -1,0 +1,14 @@
+[
+    {
+      "id": 1,
+      "name": "Fireball",
+      "description": "A powerful fireball that deals damage to enemies.",
+      "cost": 10
+    },
+    {
+      "id": 2,
+      "name": "Heal",
+      "description": "Heals a friendly target.",
+      "cost": 8
+    }
+  ]  

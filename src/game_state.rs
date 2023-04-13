@@ -1,32 +1,48 @@
-use crate::character::Character;
-use crate::quest::Quest;
-use crate::ability::Ability;
+/*
+This file will contain the GameState struct, which will hold the game's state,
+including the character, quests, abilities, and resources.
+*/
+use crate::{
+    ability::Ability,
+    character::Character,
+    load_data::load_from_json,
+    quest::Quest,
+    resources::Resources,
+    ui::ButtonState,
+};
 
 pub struct GameState {
-    pub character: Character,
-    pub quests: Vec<Quest>,
     pub abilities: Vec<Ability>,
-    pub resources: u32,
-    pub quest_button_states: Vec<button::State>,
+    pub characters: Vec<Character>,
+    pub quests: Vec<Quest>,
+    pub resources: Resources,
+    pub quest_button_states: Vec<ButtonState>,
 }
 
 impl GameState {
     pub fn new() -> Self {
-        let quest_button_states = vec![button::State::new(); quests.len()];
+        let abilities = load_from_json::<Ability>("data/abilities.json").expect("Failed to load abilities");
+        let quests = load_from_json::<Quest>("data/quests.json").expect("Failed to load quests");
+        let resources = Resources::default();
+        let characters = vec![
+            Character {
+                name: String::from("Alice"),
+                abilities: abilities.clone(),
+            },
+            Character {
+                name: String::from("Bob"),
+                abilities: abilities.clone(),
+            },
+        ];
+
+        let quest_button_states = vec![ButtonState::new(); quests.len()];
+
         GameState {
-            character: Character::new("Hero"),
-            quests: vec![],
-            abilities: Vec::new(),
-            resources: 0,
+            abilities,
+            characters,
+            quests,
+            resources,
             quest_button_states,
         }
-    }
-
-    pub fn add_quest(&mut self, quest: Quest) {
-        self.quests.push(quest);
-    }
-
-    pub fn execute_ability(&mut self, index: usize) {
-        self.character.execute_ability(index);
     }
 }

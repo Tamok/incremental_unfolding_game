@@ -1,0 +1,14 @@
+[
+    {
+      "id": 1,
+      "name": "Defeat the Slimes",
+      "description": "Defeat 10 slimes in the forest.",
+      "reward": 50
+    },
+    {
+      "id": 2,
+      "name": "Find the Lost Artifact",
+      "description": "Find the ancient artifact hidden in the cave.",
+      "reward": 100
+    }
+  ]  
