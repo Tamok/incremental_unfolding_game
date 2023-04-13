@@ -1,20 +1,27 @@
 #[derive(Debug, Clone)]
 pub struct Quest {
-    title: String,
-    description: String,
-    completed: bool,
+    pub name: String,
+    pub description: String,
+    pub is_active: bool,
+    pub is_complete: bool,
 }
 
 impl Quest {
-    pub fn new(title: &str, description: &str) -> Self {
-        Quest {
-            title: title.to_string(),
+    pub fn new(name: &str, description: &str) -> Self {
+        Self {
+            name: name.to_string(),
             description: description.to_string(),
-            completed: false,
+            is_active: false,
+            is_complete: false,
         }
     }
 
+    pub fn activate(&mut self) {
+        self.is_active = true;
+    }
+
     pub fn complete(&mut self) {
-        self.completed = true;
+        self.is_active = false;
+        self.is_complete = true;
     }
 }
