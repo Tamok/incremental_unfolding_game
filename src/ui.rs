@@ -1,4 +1,7 @@
 use crate::game_state::GameState;
+use crate::character::Character;
+use crate::quest::Quest;
+
 use iced::{
     Application, Column, Command, Container, Element, Length, Row, Settings, Text, button, Button,
 };
@@ -21,6 +24,7 @@ impl IncrementalGame {
 #[derive(Debug, Clone, Copy)]
 pub enum Message {
     ResourceButtonPressed,
+    QuestSelected(u32),
 }
 
 impl Application for IncrementalGame {
@@ -85,7 +89,7 @@ impl Application for IncrementalGame {
             .center_y()
             .into()
     }
-    
+}  
 
 fn character_widget(character: &Character) -> Column<Message> {
     let name = Text::new(&character.name)
@@ -104,7 +108,7 @@ fn character_widget(character: &Character) -> Column<Message> {
         .push(resources)
 }
 
-fn quest_widget(quest: &Quest, button_state: &mut button::State) -> Button<Message> {
+fn quest_widget<'a>(quest: &'a Quest, button_state: &'a mut button::State) -> Button<'a, Message> {
     let label = format!("{} - Cost: {}", quest.name, quest.cost);
     
     Button::new(button_state, Text::new(label).size(16))

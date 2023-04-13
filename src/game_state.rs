@@ -7,15 +7,18 @@ pub struct GameState {
     pub quests: Vec<Quest>,
     pub abilities: Vec<Ability>,
     pub resources: u32,
+    pub quest_button_states: Vec<button::State>,
 }
 
 impl GameState {
     pub fn new() -> Self {
+        let quest_button_states = vec![button::State::new(); quests.len()];
         GameState {
             character: Character::new("Hero"),
             quests: vec![],
             abilities: Vec::new(),
             resources: 0,
+            quest_button_states,
         }
     }
 

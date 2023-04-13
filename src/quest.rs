@@ -1,7 +1,9 @@
 #[derive(Debug, Clone)]
 pub struct Quest {
+    pub id: u32,
     pub name: String,
     pub description: String,
+    pub cost: u32,
     pub is_active: bool,
     pub is_complete: bool,
 }
