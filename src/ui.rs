@@ -1,40 +1,25 @@
-use crate::quest::Quest;
+use crate::game_state::GameState;
+use crate::character::Character;
 use iced::{
-    Application, Column, Command, Container, Element, Settings, Text, button, Button, Length, Row,
+    Application, Column, Command, Container, Element, Text, button, Button, Length,
 };
 
-#[derive(Debug, Clone)]
-pub enum Message {
-    Increment,
-    CompleteQuest(usize),
-}
-
-#[derive(Debug, Clone)]
-pub struct Character {
-    name: String,
-    level: u32,
-    experience: f64,
-}
-
-impl Character {
-    pub fn new(name: &str, level: u32, experience: f64) -> Self {
-        Character {
-            name: name.to_string(),
-            level,
-            experience,
-        }
-    }
-}
-
 pub struct IncrementalGame {
-    character: Character,
-    increment_button: button::State,
-    quests: Vec<Quest>,
+    game_state: GameState,
+    resource_button_state: button::State,
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum Message {
+    ResourceButtonPressed,
 }
 
 impl IncrementalGame {
-    pub fn new(settings: Settings<Character>) -> iced::Result {
-        IncrementalGame::run(settings)
+    pub fn new() -> Self {
+        IncrementalGame {
+            game_state: GameState::new(),
+            resource_button_state: button::State::new(),
+        }
     }
 }
 
@@ -43,74 +28,28 @@ impl Application for IncrementalGame {
     type Flags = Character;
     type Message = Message;
 
-    fn new(flags: Character) -> (Self, Command<Self::Message>) {
-        let mut quests = Vec::new();
-        quests.push(Quest::new(
-            "First Quest",
-            "Increment your experience to complete this quest.",
-        ));
-
-        (
-            Self {
-                character: flags,
-                increment_button: button::State::new(),
-                quests,
-            },
-            Command::none(),
-        )
+    fn new(_flags: Self::Flags) -> (Self, Command<Self::Message>) {
+        (IncrementalGame::new(), Command::none())
     }
 
     fn title(&self) -> String {
-        String::from("Incremental Game")
+        String::from("Incremental Unfolding Game")
     }
 
-    fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
-        match message {
-            Message::Increment => {
-                self.character.experience += 10.0;
-                if self.character.experience >= 10.0 {
-                    self.quests[0].complete();
-                }
-            }
-            Message::CompleteQuest(index) => {
-                self.quests[index].complete();
-            }
-        }
-
+    fn update(&mut self, _message: Self::Message) -> Command<Self::Message> {
         Command::none()
     }
 
     fn view(&mut self) -> Element<Self::Message> {
-        let increment_button = Button::new(
-            &mut self.increment_button,
-            Text::new("Increment Experience"),
-        )
-        .on_press(Message::Increment);
-
- 
-        let mut content = Column::new()
-            .push(Text::new("Incremental Game"))
-            .push(Text::new(format!("Name: {}", self.character.name)))
-            .push(Text::new(format!("Level: {}", self.character.level)))
-            .push(Text::new(format!(
-                "Experience: {:.1}",
-                self.character.experience
-            )))
-            .push(increment_button)
-            .spacing(20);
-
-        for (index, quest) in self.quests.iter().enumerate() {
-            let quest_status = if quest.completed {
-                "Completed"
-            } else {
-                "Not completed"
-            };
-
-            content = content
-                .push(Text::new(format!("{} - {}", quest.title, quest.description)))
-                .push(Text::new(format!("Status: {}", quest_status)))
-                .spacing(20);
-        }
+        let content = Column::new()
+            .padding(20)
+            .spacing(20)
+            .push(Text::new("Resources:"))
+            .push(
+                Button::new(&mut self.resource_button_state, Text::new("Gain Resource"))
+                    .padding(10)
+                    .on_press(Message::ResourceButtonPressed),
+            );
 
         Container::new(content)
             .width(Length::Fill)
