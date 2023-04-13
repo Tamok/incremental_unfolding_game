@@ -1,10 +1,16 @@
+/*
+This file will act as an entry point for the application.
+It will handle creating the window and running the game loop.
+*/
 mod ui;
 mod quest;
+mod character;
+mod ability;
+mod game_state;
 
-use iced::Settings;
-use ui::IncrementalGame;
+use crate::ui::IncrementalGame;
+use iced::{Application, Settings};
 
-fn main() -> iced::Result {
-    let character = ui::Character::new("Player", 1, 0.0);
-    IncrementalGame::new(Settings::with_flags(character))
+pub fn main() -> iced::Result {
+    IncrementalGame::run(Settings::default())
 }
