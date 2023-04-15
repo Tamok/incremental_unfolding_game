@@ -8,8 +8,8 @@ use crate::{
     load_data::load_from_json,
     quest::Quest,
     resources::Resources,
-    ui::ButtonState,
 };
+use iced::button::State as ButtonState;
 
 pub struct GameState {
     pub abilities: Vec<Ability>,
@@ -25,14 +25,8 @@ impl GameState {
         let quests = load_from_json::<Quest>("data/quests.json").expect("Failed to load quests");
         let resources = Resources::default();
         let characters = vec![
-            Character {
-                name: String::from("Alice"),
-                abilities: abilities.clone(),
-            },
-            Character {
-                name: String::from("Bob"),
-                abilities: abilities.clone(),
-            },
+            Character::new("Alice", abilities.clone()),
+            Character::new("Bob", abilities.clone()),
         ];
 
         let quest_button_states = vec![ButtonState::new(); quests.len()];
