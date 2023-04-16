@@ -7,7 +7,8 @@ use crate::{
     character::Character,
     load_data::load_from_json,
     quest::Quest,
-    resources::Resources,
+    resource::Resource,
+    ui::ButtonState,
 };
 use iced::button::State as ButtonState;
 

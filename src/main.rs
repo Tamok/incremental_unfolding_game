@@ -7,6 +7,8 @@ mod quest;
 mod character;
 mod ability;
 mod game_state;
+mod load_data;
+mod resource;
 
 use crate::ui::IncrementalGame;
 use iced::{Application, Settings};

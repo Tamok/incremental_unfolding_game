@@ -8,6 +8,7 @@ pub struct Quest {
     pub id: u32,
     pub name: String,
     pub description: String,
+    pub reward: u32,
     pub cost: u32,
 }
 
