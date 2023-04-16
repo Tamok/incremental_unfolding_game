@@ -1,9 +1,13 @@
+/*
+This file will contain the User Interface (UI) logic of the game.
+It will define the layout and structure of the UI elements and handle their interactions.
+*/
 use crate::game_state::GameState;
 use crate::character::Character;
 use crate::quest::Quest;
 
 use iced::{
-    Application, Column, Command, Container, Element, Length, Row, Settings, Text, button, Button,
+    Application, Column, Command, Container, Element, Length, Settings, Text, button, Button,
 };
 
 pub fn run() -> Result<(), iced::Error> {
@@ -61,14 +65,14 @@ impl Application for IncrementalGame {
             resource_button_state,
         } = self;
     
-        let character = character_widget(&state.character);
+        let character = character_widget(&state.characters[0]);
     
         let quests = state
             .quests
             .iter()
             .zip(&mut state.quest_button_states)
             .map(|(quest, button_state)| quest_widget(quest, button_state))
-            .collect::<Column<_>>();
+            .fold(Column::new(), |column, button| column.push(button));            
     
         let content = Column::new()
             .spacing(20)
