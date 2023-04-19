@@ -1,3 +1,6 @@
 /target
 **/*.rs.bk
 Cargo.lock
+ai_insight_gdocs.py
+ai_insight_githoube.py
+ai_insight_githoube2.py
