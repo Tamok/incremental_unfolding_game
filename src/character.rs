@@ -1,8 +1,6 @@
 /*
 This file will contain the Character struct and associated logic.
 */
-use crate::ability::{Ability, create_ability_list};
-
 use crate::ability::Ability;
 
 #[derive(Default)]

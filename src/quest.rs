@@ -13,12 +13,13 @@ pub struct Quest {
 }
 
 impl Quest {
-    pub fn new(name: &str, description: &str, id: u32, reward: u32) -> Self {
+    pub fn new(name: &str, description: &str, id: u32, reward: u32, cost: u32) -> Self {
         Self {
             name: name.to_string(),
             description: description.to_string(),
             id,
             reward,
+            cost,
         }
     }
 }

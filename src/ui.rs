@@ -21,7 +21,7 @@ pub struct IncrementalGame {
 
 impl IncrementalGame {
     fn gain_resource(&mut self) {
-        self.state.resources += 1;
+        self.state.characters[0].resources[0].generate();
     }
 }
 
